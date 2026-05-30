@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sayuki - login</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block&icons=question_mark" />
+    <meta name="description" content="A free AI router">
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/login.css">
+</head>
+
+<body>
+
+    <h3 class="logo">sayuki <span class="router">proxy</span></h3>
+        <div class="full-wh">
+        <div class="bg-animation">
+            <div id='stars'></div>
+            <div id='stars2'></div>
+            <div id='stars3'></div>
+            <div id='stars4'></div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+
+        <h3>login to sayuki</h3>
+
+        <input type="text" placeholder="username">
+
+        <input type="password" placeholder="password">
+        <p style="font-size: 15px;" id="warning"></p>
+
+        <div style="display: flex; gap: 8px;">
+            <div class="button long" id="login">
+                Sign In
+            </div>
+        </div>
+
+    </div>
+
+    <div id="reset-form" class="dashboard" style="display:none">
+        <h3>set a new password</h3>
+        <input type="password" id="reset-new-password" placeholder="new password">
+        <input type="password" id="reset-confirm-password" placeholder="confirm password">
+        <p style="font-size:15px" id="reset-warning"></p>
+        <div class="button long" id="reset-confirm">Set Password</div>
+    </div>
+
+    <div class="circle" style="position: fixed; bottom: 15px; right: 15px;" onclick="window.location='https://discord.com/channels/1456149154232270919/1495512677261381873'">
+        <span class="material-symbols-outlined">question_mark</span>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/global.js"></script>    <script src="scripts/login.js"></script>
+
+</body>
+
+</html>

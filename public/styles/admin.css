@@ -1,0 +1,311 @@
+.dashboard {
+    max-width: 80%;
+    min-width: 80%;
+    min-height: 100vh;
+    position: fixed;
+    margin-top: 90px;
+}
+
+.dashboard > div input {
+    margin-top: 0;
+    height: 40px;
+    width: 70vw;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.lorebooks {
+    width: 100%;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    height: calc(100vh - 260px);
+    overflow-y: auto;
+    gap: 8px;
+    align-content: flex-start;
+}
+
+.lorebook {
+    border: 2px solid;
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+    min-width: 150px;
+    min-height: 150px;
+    max-width: 150px;
+    max-height: 150px;
+    box-sizing: border-box;
+    margin-top: 15px;
+    height: min-content;
+    align-items: center;
+    justify-content: flex-start;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    margin-top: auto;
+    width: 100%;
+    gap: 4px;
+}
+
+.card-actions .use-btn {
+    flex: 1;
+    width: auto;
+    margin: 5px 0;
+}
+
+.card-menu {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.card-menu-btn {
+    width: 28px !important;
+    min-width: 28px !important;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+}
+
+.card-menu-dropdown {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    border: 1px solid #feb5bf;
+    border-radius: 8px;
+    z-index: 100;
+    flex-direction: column;
+    min-width: 70px;
+    padding: 4px;
+    gap: 2px;
+}
+
+.card-menu-dropdown.open {
+    display: flex;
+}
+
+.card-menu-dropdown button {
+    width: 100%;
+    height: 26px;
+    margin: 0;
+    font-size: 10px;
+}
+
+.lorebook h4 {
+    margin: 0 0 5px 0;
+    font-size: medium;
+}
+p {
+    margin: 0 0 5px 0;
+    font-size: 10px;
+    color: rgba(254, 181, 191, 0.65);
+    font-weight: 500;
+}
+
+.stage {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 10px);
+}
+
+button {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #feb5bf;
+    padding: 5px 5px;
+    border-radius: 190px;
+    cursor: pointer;
+    margin: 5px 0;
+    display: flex;
+    gap: 8px;
+    height: 30px;
+    width: 90%;
+    align-items: center;
+    color: #feb5bf;
+    font-size: 10px;
+    text-align: center;
+    justify-content: center;
+    background-color: transparent;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+    backdrop-filter: blur(5px);
+   
+}
+
+button:hover {
+    transition: all 0.1s ease-in-out;
+    background-color: rgb(254, 181, 191, 0.7);
+}
+
+/* Import lorebook modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.modal-box {
+    backdrop-filter: blur(2px);
+    border: 2px solid #feb5bf;
+    border-radius: 12px;
+    padding: 24px;
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h4 {
+    margin: 0;
+    color: #feb5bf;
+}
+
+.modal-header .material-symbols-outlined {
+    cursor: pointer;
+    color: #feb5bf;
+}
+
+.modal-label {
+    font-size: 12px;
+    color: rgba(254, 181, 191, 0.7);
+}
+
+.file-drop-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px dashed rgba(254, 181, 191, 0.4);
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.file-drop-zone:hover {
+    border-color: #feb5bf;
+}
+
+.file-drop-zone .material-symbols-outlined {
+    color: #feb5bf;
+    font-size: 20px;
+}
+
+.file-drop-zone span:last-child {
+    font-size: 13px;
+    color: rgba(254, 181, 191, 0.7);
+}
+
+.file-drop-zone.has-file span:last-child {
+    color: #feb5bf;
+}
+
+.modal-import-btn {
+    width: 100%;
+    font-size: 16px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    resize: none;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #feb5bf;
+  padding: 10px 18px;
+  border-radius: 19px;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #feb5bf;
+  font-size: 15px;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(5px);
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+}
+
+textarea:focus {
+  transition: all 0.2s ease-in-out;
+  background-color: rgb(254, 181, 191, 0.7);
+  outline: none;
+  color: white;
+}
+
+textarea:focus::placeholder {
+    color: white;
+}
+
+textarea::placeholder {
+  color: #feb5bf;
+}
+
+.tabs {
+    width: 80%;
+    display: flex;
+    gap: 8px;
+    margin-bottom: auto;
+    height: 35px;
+    justify-content: center;
+}
+
+@keyframes activate {
+    0% {
+        border-bottom: transparent;
+    }
+    100% {
+        border-bottom: 2px solid #feb5bf;
+    }
+}
+
+.tab {
+    width: min-content;
+    text-align: center;
+    padding: 10px 5px;
+    cursor: pointer;
+    color: #feb5bf;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    gap: 8px;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+}
+
+
+.tab.active {
+    border-bottom: 2px solid #fff;
+    animation: activate 0.2s ease-in-out;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
+
+iframe {
+    border-radius: 15px;
+    border: none;
+    width: 90%;
+    height: 75%;
+    overflow: hidden;
+    position: absolute;
+    top: 130px;
+    left: 5%;
+}

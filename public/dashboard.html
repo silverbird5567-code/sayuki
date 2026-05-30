@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sayuki - dashboard</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block&icons=account_circle,handyman,logout,computer,key,code,book_2,book_3,chat,question_mark" />
+    <meta name="description" content="A free AI router">
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+
+<body>
+
+        <div class="full-wh">
+        <div class="bg-animation">
+            <div id='stars'></div>
+            <div id='stars2'></div>
+            <div id='stars3'></div>
+            <div id='stars4'></div>
+        </div>
+    </div>
+
+    <div class="avatar-wrapper">
+        <span class="material-symbols-outlined avatar-icon" id="avatar-btn">account_circle</span>
+        <div class="avatar-dropdown" id="avatar-dropdown">
+            <div class="avatar-dropdown-item" id="admin-btn" style="display:none" onclick="window.location='./admin'">
+                <span class="material-symbols-outlined">handyman</span>
+                Admin Tools
+            </div>
+            <div class="avatar-dropdown-item" id="signout-btn">
+                <span class="material-symbols-outlined">logout</span>
+                Sign out
+            </div>
+        </div>
+    </div>
+    
+    <h3 class="logo" onclick="window.location='/'">sayuki <span class="router"
+            onclick="window.location='/'">proxy</span></h3>
+
+
+    <div class="dashboard">
+
+        <h3 class="name" id="name">Give us a second...</h3>
+
+        <div class="button long" onclick="window.location='/models'">
+            <span class="material-symbols-outlined">computer</span>
+            Models
+        </div>
+
+        <div class="button long" onclick="window.location='/apikeys'">
+            <span class="material-symbols-outlined">key</span>
+            API Keys
+        </div>
+
+
+        <div class="together">
+            <div class="button big" onclick="window.location='/plugins'">
+                <span class="material-symbols-outlined">code</span>
+                Plugins
+            </div>
+
+            <div class="button big" onclick="window.location='/lorebooks'">
+                <span class="material-symbols-outlined">book_2</span>
+                Lorebooks
+            </div>
+        </div>
+
+        <div class="together">
+            <div class="button big" onclick="window.location='/modelsmanager'">
+                <span class="material-symbols-outlined">computer</span>
+                Model Management
+            </div>
+
+            <div class="button big" onclick="window.location='/service/docs'">
+                <span class="material-symbols-outlined">book_3</span>
+                Docs
+            </div>
+        </div>
+
+        <div class="button long" onclick="window.location='/prompts'">
+            <span class="material-symbols-outlined">chat</span>
+            Prompts
+        </div>
+
+    </div>
+
+    <div class="circle" style="position: fixed; bottom: 15px; right: 15px;" onclick="window.location='https://discord.com/channels/1456149154232270919/1495512677261381873'">
+        <span class="material-symbols-outlined">question_mark</span>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/global.js"></script>    <script src="scripts/dashboard.js"></script>
+
+</body>
+
+</html>

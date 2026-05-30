@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Inter:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+
+    body {
+        margin: 0;
+        color: #feb5bf;
+        font-family: "Inter";
+        user-select: none;
+        max-width: 700px;
+        margin: 0 auto;
+
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+
+    span {
+        color: #feb5bf;
+    }
+
+    .logo {
+        position: fixed;
+        left: 15px;
+        top: 12px;
+        letter-spacing: 1px;
+        color: #feb5bf;
+        margin: 0;
+    }
+
+    .router {
+        background-color: #feb5bf;
+        color: hsl(180, 7%, 3%);
+        padding: 1px 4px;
+        border-radius: 5px;
+    }
+
+    .avatar-wrapper {
+        position: fixed;
+        right: 15px;
+        top: 10px;
+        z-index: 100;
+    }
+
+    .avatar-icon {
+        font-size: 38px;
+        color: #feb5bf;
+        cursor: pointer;
+        display: block;
+        line-height: 1;
+        user-select: none;
+    }
+
+    .avatar-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 6px);
+        background: transparent;
+        backdrop-filter: blur(15px);
+        border: 1px solid #feb5bf;
+        border-radius: 8px;
+        min-width: 140px;
+        overflow: hidden;
+    }
+
+    .avatar-dropdown.open {
+        display: block;
+    }
+
+    .avatar-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #e0e0e0;
+        transition: background 0.15s;
+    }
+
+    .avatar-dropdown-item:hover {
+        background: #2a2a2a;
+    }
+
+    .avatar-dropdown-item .material-symbols-outlined {
+        font-size: 18px;
+        color: #feb5bf;
+    }
+
+    .name {
+        color: #feb5bf;
+    }
+
+    .dashboard {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-size: 25px;
+        width: clamp(280px, 50vw, 480px);
+    }
+
+    .button {
+        border-style: solid;
+        border-width: 2px;
+        border-color: #feb5bf;
+        padding: 10px 18px;
+        border-radius: 190px;
+        cursor: pointer;
+        margin: 5px 0;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: #feb5bf;
+        font-size: 15px;
+        text-align: center;
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
+        transition: all 0.2s ease-in-out;
+        backdrop-filter: blur(5px);
+    }
+
+    .button:hover {
+        transition: all 0.2s ease-in-out;
+        background-color: rgb(254, 181, 191, 0.7);
+    }
+
+    .circle {
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        cursor: pointer;
+        border-color: #feb5bf;
+        border-style: solid;
+        border-width: 2px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        color: #feb5bf;
+        font-size: 15px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .circle:hover {
+        transition: all 0.2s ease-in-out;
+        background-color: #feb5bf;
+    }
+
+    .circle:hover span {
+        color: hsl(180, 7%, 3%);
+    }
+
+    input {
+        border-style: solid;
+        border-width: 2px;
+        border-color: #feb5bf;
+        padding: 10px 18px;
+        border-radius: 190px;
+        cursor: pointer;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: #feb5bf;
+        font-size: 15px;
+        text-align: center;
+        margin-top: 15px;
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
+        backdrop-filter: blur(5px);
+        transition: all 0.2s ease-in-out;
+        background-color: transparent;
+    }
+
+    input:focus {
+        transition: all 0.2s ease-in-out;
+        background-color: rgb(254, 181, 191, 0.7);
+        outline: none;
+        color: white;
+    }
+
+    input:focus::placeholder {
+        color: white;
+    }
+
+    input::placeholder {
+        color: #feb5bf;
+    }
+
+    .back-btn {
+        position: fixed;
+        top: 50px;
+        left: 15px;
+        height: 32px;
+        width: auto;
+        padding: 0 14px;
+        border-radius: 190px;
+        background-color: transparent;
+        border: 2px solid #feb5bf;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: #feb5bf;
+        font-size: 13px;
+        gap: 4px;
+        z-index: 100;
+    }
+
+    .back-btn .material-symbols-outlined {
+        font-size: 16px;
+    }
+
+    .chat {
+        width: 95%;
+        height: min-content;
+        border: 2px solid #feb5bf;
+        border-radius: 15px;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .chats {
+        border: 2px solid #feb5bf;
+        height: 100%;
+        border-radius: 15px;
+        margin-top: 15px;
+        padding: 10px 5px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .clicktoopen {
+        position: absolute;
+        right: 25px;
+        margin-top: -3px;
+    }
+
+    .chat {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        margin-bottom: 4px;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid #feb5bf;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: transparent;
+    }
+
+    .user-avatar-placeholder {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid #feb5bf;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #feb5bf;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 14px;
+        color: #feb5bf;
+        font-weight: 600;
+    }
+
+    .user-meta {
+        font-size: 11px;
+        color: #feb5bf;
+        opacity: 0.6;
+        display: flex;
+        gap: 8px;
+    }
+
+    .user-badge {
+        font-size: 11px;
+        padding: 1px 6px;
+        border-radius: 190px;
+        border: 1px solid #feb5bf;
+        color: #feb5bf;
+    }
+
+    .user-badge.banned {
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    .user-badge.admin {
+        border-color: #feb5bf;
+        color: #feb5bf;
+    }
+
+    .user-badge.owner {
+        background-color: rgb(254, 181, 191, 0.2);
+    }
+
+    .user-badges {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+        align-items: center;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-box {
+        backdrop-filter: blur(2px);
+        border: 2px solid #feb5bf;
+        border-radius: 12px;
+        padding: 24px;
+        width: 320px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h4 {
+        margin: 0;
+        color: #feb5bf;
+        font-size: 16px;
+    }
+
+    .modal-header .material-symbols-outlined {
+        cursor: pointer;
+        color: #feb5bf;
+    }
+
+    .modal-user-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .modal-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid #feb5bf;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .modal-avatar-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid #feb5bf;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #feb5bf;
+    }
+
+    .modal-user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+    }
+
+    .modal-username {
+        font-size: 16px;
+        font-weight: 700;
+        color: #feb5bf;
+    }
+
+    .modal-meta {
+        font-size: 11px;
+        color: #feb5bf;
+        opacity: 0.6;
+    }
+
+    .modal-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-action-btn {
+        border: 2px solid #feb5bf;
+        padding: 8px 14px;
+        border-radius: 190px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: #feb5bf;
+        font-size: 13px;
+        font-family: "Inter";
+        background: transparent;
+        transition: all 0.2s ease-in-out;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .modal-action-btn:hover {
+        background-color: rgb(254, 181, 191, 0.7);
+    }
+
+    .modal-action-btn:active {
+        transform: scale(0.96);
+        opacity: 0.8;
+    }
+
+    .modal-action-btn.danger {
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    .modal-action-btn.danger:hover {
+        background-color: rgba(255, 107, 107, 0.2);
+    }
+
+    .modal-action-btn.danger:active {
+        background-color: rgba(255, 107, 107, 0.35);
+        transform: scale(0.96);
+    }
+
+    .circle:active {
+        transform: scale(0.92);
+        background-color: #feb5bf;
+    }
+
+    .circle:active span {
+        color: hsl(180, 7%, 3%);
+    }
+
+    .modal-reason-input {
+        border: 2px solid #feb5bf;
+        padding: 8px 14px;
+        border-radius: 190px;
+        color: #feb5bf;
+        font-size: 13px;
+        font-family: "Inter";
+        background: transparent;
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 0;
+    }
+
+    .modal-reason-input::placeholder {
+        color: rgba(254, 181, 191, 0.5);
+    }
+
+    .modal-reason-input:focus {
+        outline: none;
+        background-color: rgb(254, 181, 191, 0.1);
+    }
+
+    .modal-divider {
+        border: none;
+        border-top: 1px solid rgba(254, 181, 191, 0.2);
+        margin: 0;
+    }
+</style>
+<link href="../../styles/global.css" type="stylesheet">
+<link href="../../styles/index.css" type="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block&icons=person_add,close,person,lock_open,lock_reset" rel="stylesheet" />
+
+<body>
+    <div style="display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box">
+        <input id="search" placeholder="search for users (username)" style="margin-top:0;flex:1">
+        <div class="circle" onclick="document.getElementById('create-user-modal').style.display='flex'" title="Create user">
+            <span class="material-symbols-outlined" style="font-size:20px">person_add</span>
+        </div>
+    </div>
+    <div class="chats" id="users">
+        <span id="empty">No users</span>
+    </div>
+
+    <div id="create-user-modal" class="modal-overlay" onclick="if(event.target===this)document.getElementById('create-user-modal').style.display='none'">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h4>Create User</h4>
+                <span class="material-symbols-outlined" onclick="document.getElementById('create-user-modal').style.display='none'">close</span>
+            </div>
+            <input class="modal-reason-input" id="create-username" placeholder="Username">
+            <span style="font-size:11px;color:rgba(254,181,191,0.5); width: 100%; text-align: center;">Password will be set by the user.</span>
+            <span id="create-user-error" style="font-size:12px;color:#ff6b6b;display:none"></span>
+            <button class="modal-action-btn" id="create-user-btn" onclick="doCreateUser()">
+                <span class="material-symbols-outlined" style="font-size:16px">person_add</span>
+                Create user
+            </button>
+        </div>
+    </div>
+
+    <div id="user-modal" class="modal-overlay" onclick="if(event.target===this)closeUserModal()">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h4>User Info</h4>
+                <span class="material-symbols-outlined" onclick="closeUserModal()">close</span>
+            </div>
+            <div class="modal-user-top">
+                <div id="modal-avatar-wrap"></div>
+                <div class="modal-user-details">
+                    <span class="modal-username" id="modal-username"></span>
+                    <div class="user-badges" id="modal-badges" style="margin-top:3px"></div>
+                    <span class="modal-meta" id="modal-joined"></span>
+                </div>
+            </div>
+            <hr class="modal-divider">
+            <div class="modal-actions">
+                <div id="modal-ban-section">
+                    <input class="modal-reason-input" id="modal-ban-reason" placeholder="Ban reason (optional)">
+                    <button class="modal-action-btn danger" id="modal-ban-confirm-btn" style="margin-top:8px">
+                        Ban user
+                    </button>
+                </div>
+                <button class="modal-action-btn" id="modal-unban-btn" style="display:none">
+                    <span class="material-symbols-outlined" style="font-size:16px">lock_open</span>
+                    Unban user
+                </button>
+                <div id="modal-admin-section" style="display:none;flex-direction:column;gap:8px">
+                    <button class="modal-action-btn" id="modal-make-admin-btn">
+                        Make admin
+                    </button>
+                    <button class="modal-action-btn danger" id="modal-remove-admin-btn" style="display:none">
+                        Remove admin
+                    </button>
+                </div>
+                <button class="modal-action-btn" id="modal-reset-auto-btn" onclick="">
+                    <span class="material-symbols-outlined" style="font-size:16px">lock_reset</span>
+                    Reset to auto password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../scripts/auth.js"></script>
+    <script>
+        function search(query) {
+            let hit = false
+            document.querySelectorAll(".chat").forEach((card) => {
+                if (!(card.id).includes(query)) {
+                    card.style.display = "none"
+                } else {
+                    hit = true
+                    card.style.display = ""
+                }
+            })
+
+            if (!hit) {
+                document.getElementById("empty").style.display = ""
+            } else {
+                document.getElementById("empty").style.display = "none"
+            }
+        }
+
+        function createUser(user) {
+            document.getElementById("empty").style.display = "none"
+            let card = document.createElement("div")
+            card.id = user.username
+            card.className = "chat"
+
+            const joined = new Date(user.creationTime * 1000).toLocaleDateString()
+
+            let avatarHtml = user.avatar
+                ? `<img class="user-avatar" src="${user.avatar}" alt="">`
+                : `<div class="user-avatar-placeholder"><span class="material-symbols-outlined" style="font-size:18px;">person</span></div>`
+
+            let badges = ""
+            if (user.isOwner) badges += `<span class="user-badge owner">owner</span>`
+            else if (user.isAdmin) badges += `<span class="user-badge admin">admin</span>`
+            if (user.isBanned) badges += `<span class="user-badge banned">banned</span>`
+
+            card.innerHTML = `
+                ${avatarHtml}
+                <div class="user-info">
+                    <span class="user-name">${user.username}</span>
+                    <span class="user-meta">
+                        <span>joined ${joined}</span>
+                    </span>
+                </div>
+                <div class="user-badges">${badges}</div>
+            `
+            card.addEventListener("click", () => openUserModal(user.username))
+            document.getElementById("users").appendChild(card)
+        }
+
+        document.getElementById("search").addEventListener("input", function (e) {
+            search(e.target.value)
+        })
+
+        const userMap = {}
+        let currentUserIsOwner = false
+
+        async function loadUsers() {
+            const res = await fetch("/api/users", {
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            })
+            const users = await res.json()
+            users.forEach(u => {
+                userMap[u.username] = u
+                createUser(u)
+            })
+        }
+
+        async function initRole() {
+            const currentUser = localStorage.getItem("username")
+            if (!currentUser) return
+            const res = await fetch(`/api/users/isOwner/${encodeURIComponent(currentUser)}`, {
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            })
+            currentUserIsOwner = await res.json() === true
+        }
+
+        function openUserModal(username) {
+            const user = userMap[username]
+            if (!user) return
+
+            const joined = new Date(user.creationTime * 1000).toLocaleDateString()
+
+            const avatarHtml = user.avatar
+                ? `<img class="modal-avatar" src="${user.avatar}" alt="">`
+                : `<div class="modal-avatar-placeholder"><span class="material-symbols-outlined">person</span></div>`
+
+            let badgesHtml = ""
+            if (user.isOwner) badgesHtml += `<span class="user-badge owner">owner</span>`
+            else if (user.isAdmin) badgesHtml += `<span class="user-badge admin">admin</span>`
+            if (user.isBanned) badgesHtml += `<span class="user-badge banned">banned</span>`
+
+            document.getElementById("modal-avatar-wrap").innerHTML = avatarHtml
+            document.getElementById("modal-username").textContent = user.username
+            document.getElementById("modal-badges").innerHTML = badgesHtml
+            document.getElementById("modal-joined").textContent = `joined ${joined}`
+            document.getElementById("modal-ban-reason").value = ""
+
+            const banSection = document.getElementById("modal-ban-section")
+            const unbanBtn = document.getElementById("modal-unban-btn")
+            const adminSection = document.getElementById("modal-admin-section")
+            const makeAdminBtn = document.getElementById("modal-make-admin-btn")
+            const removeAdminBtn = document.getElementById("modal-remove-admin-btn")
+
+            if (user.isBanned) {
+                banSection.style.display = "none"
+                unbanBtn.style.display = ""
+            } else {
+                banSection.style.display = ""
+                unbanBtn.style.display = "none"
+            }
+
+            if (currentUserIsOwner && !user.isOwner) {
+                adminSection.style.display = "flex"
+                if (user.isAdmin) {
+                    makeAdminBtn.style.display = "none"
+                    removeAdminBtn.style.display = ""
+                } else {
+                    makeAdminBtn.style.display = ""
+                    removeAdminBtn.style.display = "none"
+                }
+            } else {
+                adminSection.style.display = "none"
+            }
+
+            document.getElementById("modal-unban-btn").onclick = () => doUnban(username)
+            document.getElementById("modal-ban-confirm-btn").onclick = () => doBan(username)
+            document.getElementById("modal-make-admin-btn").onclick = () => doSetAdmin(username, true)
+            document.getElementById("modal-remove-admin-btn").onclick = () => doSetAdmin(username, false)
+            document.getElementById("modal-reset-auto-btn").onclick = () => doResetToAuto(username)
+
+            document.getElementById("user-modal").style.display = "flex"
+        }
+
+        function closeUserModal() {
+            document.getElementById("user-modal").style.display = "none"
+        }
+
+        async function doBan(username) {
+            const btn = document.getElementById("modal-ban-confirm-btn")
+            btn.textContent = "Banning..."
+            btn.style.opacity = "0.6"
+            const reason = document.getElementById("modal-ban-reason").value.trim()
+            const res = await fetch(`/api/users/ban/${encodeURIComponent(username)}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token"),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ reason })
+            })
+            btn.style.opacity = ""
+            if (res.ok) {
+                btn.textContent = "Banned!"
+                btn.style.borderColor = "#4caf50"
+                btn.style.color = "#4caf50"
+                setTimeout(() => {
+                    btn.textContent = "Ban user"
+                    btn.style.borderColor = ""
+                    btn.style.color = ""
+                }, 1500)
+                userMap[username].isBanned = true
+                userMap[username].bannedReason = reason
+                refreshCard(username)
+                openUserModal(username)
+            } else {
+                btn.textContent = "Ban user"
+                alert("Failed to ban user.")
+            }
+        }
+
+        async function doUnban(username) {
+            const btn = document.getElementById("modal-unban-btn")
+            btn.textContent = "Unbanning..."
+            btn.style.opacity = "0.6"
+            const res = await fetch(`/api/users/unban/${encodeURIComponent(username)}`, {
+                method: "POST",
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            })
+            btn.style.opacity = ""
+            if (res.ok) {
+                btn.textContent = "Unbanned!"
+                btn.style.borderColor = "#4caf50"
+                btn.style.color = "#4caf50"
+                setTimeout(() => {
+                    btn.textContent = "Unban user"
+                    btn.style.borderColor = ""
+                    btn.style.color = ""
+                }, 1500)
+                userMap[username].isBanned = false
+                userMap[username].bannedReason = ""
+                refreshCard(username)
+                openUserModal(username)
+            } else {
+                btn.textContent = "Unban user"
+                alert("Failed to unban user.")
+            }
+        }
+
+        async function doSetAdmin(username, makeAdmin) {
+            const btn = makeAdmin
+                ? document.getElementById("modal-make-admin-btn")
+                : document.getElementById("modal-remove-admin-btn")
+            const label = makeAdmin ? "Granting..." : "Removing..."
+            btn.textContent = label
+            btn.style.opacity = "0.6"
+            const res = await fetch(`/api/users/setAdmin/${encodeURIComponent(username)}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token"),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ makeAdmin })
+            })
+            btn.style.opacity = ""
+            if (res.ok) {
+                const doneLabel = makeAdmin ? "Admin granted!" : "Admin removed!"
+                btn.textContent = doneLabel
+                btn.style.borderColor = "#4caf50"
+                btn.style.color = "#4caf50"
+                setTimeout(() => {
+                    btn.textContent = makeAdmin ? "Make admin" : "Remove admin"
+                    btn.style.borderColor = ""
+                    btn.style.color = ""
+                }, 1500)
+                userMap[username].isAdmin = makeAdmin
+                refreshCard(username)
+                openUserModal(username)
+            } else {
+                btn.textContent = makeAdmin ? "Make admin" : "Remove admin"
+                alert("Failed to update admin status.")
+            }
+        }
+
+        function refreshCard(username) {
+            const user = userMap[username]
+            const card = document.getElementById(username)
+            if (!card) return
+            let badges = ""
+            if (user.isOwner) badges += `<span class="user-badge owner">owner</span>`
+            else if (user.isAdmin) badges += `<span class="user-badge admin">admin</span>`
+            if (user.isBanned) badges += `<span class="user-badge banned">banned</span>`
+            card.querySelector(".user-badges").innerHTML = badges
+        }
+
+        async function doCreateUser() {
+            const btn = document.getElementById("create-user-btn")
+            const username = document.getElementById("create-username").value.trim()
+            const errorEl = document.getElementById("create-user-error")
+            errorEl.style.display = "none"
+            if (!username) {
+                errorEl.textContent = "Username is required."
+                errorEl.style.display = ""
+                return
+            }
+            btn.textContent = "Creating..."
+            btn.style.opacity = "0.6"
+            const res = await fetch("/api/users/create", {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token"),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username })
+            })
+            const data = await res.json()
+            btn.style.opacity = ""
+            if (res.ok) {
+                btn.textContent = "Created!"
+                btn.style.borderColor = "#4caf50"
+                btn.style.color = "#4caf50"
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">person_add</span> Create user'
+                    btn.style.borderColor = ""
+                    btn.style.color = ""
+                }, 1500)
+                document.getElementById("create-user-modal").style.display = "none"
+                document.getElementById("create-username").value = ""
+                const newUser = { username, avatar: null, creationTime: Math.floor(Date.now() / 1000), isAdmin: false, isOwner: false, isBanned: false, bannedReason: "" }
+                userMap[username] = newUser
+                createUser(newUser)
+            } else {
+                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">person_add</span> Create user'
+                errorEl.textContent = data.error || data.message || "Failed to create user."
+                errorEl.style.display = ""
+            }
+        }
+
+        async function doResetToAuto(username) {
+            const btn = document.getElementById("modal-reset-auto-btn")
+            btn.textContent = "Resetting..."
+            btn.style.opacity = "0.6"
+            const res = await fetch(`/api/users/resetToAuto/${encodeURIComponent(username)}`, {
+                method: "POST",
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            })
+            btn.style.opacity = ""
+            if (res.ok) {
+                btn.textContent = "Reset!"
+                btn.style.borderColor = "#4caf50"
+                btn.style.color = "#4caf50"
+                setTimeout(() => {
+                    btn.textContent = "Reset to auto password"
+                    btn.style.borderColor = ""
+                    btn.style.color = ""
+                }, 1500)
+            } else {
+                btn.textContent = "Reset to auto password"
+                const data = await res.json()
+                alert(data.error || "Failed to reset password.")
+            }
+        }
+
+        loadUsers()
+        initRole()
+
+        auth.requireAdmin();
+    </script>
+</body>
+
+</html>

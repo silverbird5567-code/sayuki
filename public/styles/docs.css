@@ -1,0 +1,70 @@
+.dashboard {
+  font-size: 15px;
+  top: 55%;
+  position: absolute;
+  text-align: left;
+}
+
+.dashboard h4 {
+  font-size: 22px;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.dashboard h5 {
+  font-size: 16px;
+  margin: 0 0 10px 0;
+  color: rgba(254, 181, 191, 0.65);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.dashboard > span {
+  font-size: 14px;
+  color: rgba(254, 181, 191, 0.7);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.docs-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.docs-steps p {
+  font-size: 13px;
+  margin: 0;
+  padding: 10px 14px;
+  border-left: 2px solid rgba(254, 181, 191, 0.35);
+  background: rgba(254, 181, 191, 0.04);
+  border-radius: 0 8px 8px 0;
+  line-height: 1.5;
+  color: rgba(254, 181, 191, 0.85);
+  user-select: text;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.docs-steps p:hover {
+  border-left-color: rgba(254, 181, 191, 0.75);
+  background: rgba(254, 181, 191, 0.08);
+}
+
+.docs-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(254, 181, 191, 0.12);
+  margin: 12px 0;
+}
+
+code, .inline-code {
+  font-family: "Courier New", monospace;
+  font-size: 11.5px;
+  background: rgba(254, 181, 191, 0.1);
+  border: 1px solid rgba(254, 181, 191, 0.2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: #feb5bf;
+  user-select: text;
+}
