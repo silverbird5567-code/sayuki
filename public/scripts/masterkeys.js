@@ -39,10 +39,12 @@ function populateModelsList(models, contextWindows) {
 }
 
 function addKeyCard(mk) {
-    const { name, url, limit, models, contextWindows, poolMode } = mk;
+    const { name, url, limit, models, contextWindows, poolMode, poolUsageCount } = mk;
     const { code } = mk;
     const limitDisplay = limit > 0
-        ? `${limit} / day ${poolMode ? "(shared pool)" : "(per user)"}`
+        ? poolMode
+            ? `${poolUsageCount ?? 0} / ${limit} today (shared pool)`
+            : `${limit} / day (per user)`
         : "Unlimited";
     const modelsDisplay = (models && models.length > 0)
         ? models.map(m => contextWindows?.[m] ? `${m} (${Number(contextWindows[m]).toLocaleString()})` : m).join(", ")
@@ -55,6 +57,7 @@ function addKeyCard(mk) {
     el.dataset.models = JSON.stringify(models || []);
     el.dataset.contextWindows = JSON.stringify(contextWindows || {});
     el.dataset.poolMode = poolMode ? "1" : "0";
+    el.dataset.poolUsageCount = poolUsageCount ?? 0;
     el.innerHTML = `
         <div class="key-content">
             <div class="key-header" onclick="toggleKeyDetails(this)">
@@ -130,6 +133,9 @@ function openEditModal(name) {
     document.getElementById("mk-users-section").style.display = "";
     document.getElementById("mk-user-search").value = "";
     loadUsersForKey(name);
+    document.getElementById("mk-access-section").style.display = "";
+    document.getElementById("mk-access-search").value = "";
+    loadAccessUsers(name);
     document.getElementById("mk-modal").style.display = "flex";
 }
 
@@ -139,6 +145,7 @@ function clearForm() {
     });
     document.getElementById("mk-models-list").innerHTML = "";
     document.getElementById("mk-pool-mode").value = "0";
+    document.getElementById("mk-access-section").style.display = "none";
 }
 
 function closeModal() {
@@ -183,8 +190,11 @@ async function submitModal() {
                 ? models.map(m => contextWindows?.[m] ? `${m} (${Number(contextWindows[m]).toLocaleString()})` : m).join(", ")
                 : "All models";
             card.querySelector(".models-text").textContent = modelsDisplay;
+            const poolUsageCount = parseInt(card.dataset.poolUsageCount) || 0;
             const limitDisplay = limit > 0
-                ? `${limit} / day ${poolMode ? "(shared pool)" : "(per user)"}`
+                ? poolMode
+                    ? `${poolUsageCount} / ${limit} today (shared pool)`
+                    : `${limit} / day (per user)`
                 : "Unlimited";
             card.querySelector(".requests-text").textContent = limitDisplay;
         }
@@ -293,6 +303,88 @@ async function toggleUserExclusion(keyName, username, currentlyExcluded) {
         await loadUsersForKey(keyName);
         const search = document.getElementById("mk-user-search").value;
         if (search) filterUsersList(search);
+    }
+}
+
+async function loadAccessUsers(keyName) {
+    const list = document.getElementById("mk-access-list");
+    list.innerHTML = `<span style="font-size:11px;color:rgba(254,181,191,0.4)">Loading...</span>`;
+
+    const res = await fetch(`/api/masterkeys/${encodeURIComponent(keyName)}/users`, { headers: authHeaders() });
+    if (!res.ok) {
+        list.innerHTML = `<span style="font-size:11px;color:#ff6b6b">Failed to load users</span>`;
+        return;
+    }
+
+    const { users } = await res.json();
+    list.innerHTML = "";
+
+    if (!users || users.length === 0) {
+        list.innerHTML = `<span style="font-size:11px;color:rgba(254,181,191,0.4)">No users have redeemed this code yet</span>`;
+        return;
+    }
+
+    for (const username of users) {
+        const row = document.createElement("div");
+        row.className = "mk-user-row";
+        row.dataset.username = username;
+        row.innerHTML = `
+            <span class="material-symbols-outlined" style="font-size:16px;flex-shrink:0;color:#feb5bf">person</span>
+            <span class="mk-user-name"></span>
+            <button class="mk-exclude-btn" style="background:rgba(255,80,80,0.15);color:#ff8080;">
+                <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">person_remove</span>
+                Revoke
+            </button>
+        `;
+        row.querySelector(".mk-user-name").textContent = username;
+        const btn = row.querySelector("button");
+        btn.addEventListener("click", (e) => { revokeUserAccess(keyName, username); e.stopPropagation(); });
+        list.appendChild(row);
+    }
+}
+
+function filterAccessList(query) {
+    const q = query.trim().toLowerCase();
+    document.querySelectorAll("#mk-access-list .mk-user-row").forEach(row => {
+        row.style.display = !q || row.dataset.username.toLowerCase().includes(q) ? "" : "none";
+    });
+}
+
+async function revokeUserAccess(keyName, username) {
+    if (!confirm(`Revoke ${username}'s access to "${keyName}"? Their API keys for this provider will stop working.`)) return;
+    const res = await fetch(`/api/masterkeys/${encodeURIComponent(keyName)}/revokeUser`, {
+        method: "DELETE",
+        headers: authHeaders(),
+        body: JSON.stringify({ username })
+    });
+    if (res.ok) {
+        await loadAccessUsers(keyName);
+        const search = document.getElementById("mk-access-search").value;
+        if (search) filterAccessList(search);
+    } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error ?? "Failed to revoke access.");
+    }
+}
+
+async function refreshAccessCode() {
+    if (!editingKey) return;
+    if (!confirm(`Refresh the access code for "${editingKey}"? The old code will stop working immediately.`)) return;
+    const res = await fetch(`/api/masterkeys/${encodeURIComponent(editingKey)}/refreshCode`, {
+        method: "POST",
+        headers: authHeaders()
+    });
+    if (res.ok) {
+        const { code } = await res.json();
+        const card = document.querySelector(`.key[data-name="${CSS.escape(editingKey)}"]`);
+        if (card) {
+            card.dataset.code = code;
+            card.querySelector(".code-text").textContent = code;
+        }
+        alert(`New code: ${code}`);
+    } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error ?? "Failed to refresh code.");
     }
 }
 

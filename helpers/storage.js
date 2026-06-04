@@ -447,6 +447,7 @@ function deleteMasterKey(name, requestingUser) {
 
 function getMasterKeys(requestingUser) {
     const rows = db.query("SELECT * FROM master_keys WHERE owner = ?").all(requestingUser);
+    const today = new Date().toISOString().slice(0, 10);
 
     return rows.map(r => ({
         name: r.name,
@@ -457,7 +458,8 @@ function getMasterKeys(requestingUser) {
         models: JSON.parse(r.models || "[]"),
         contextWindows: JSON.parse(r.context_windows || "{}"),
         code: r.code,
-        poolMode: r.pool_mode === 1
+        poolMode: r.pool_mode === 1,
+        poolUsageCount: r.pool_usage_date === today ? (r.pool_usage_count ?? 0) : 0,
     }));
 }
 
@@ -556,25 +558,32 @@ function validateKey(token) {
 }
 
 function getApiKeys(user) {
+    const today = new Date().toISOString().slice(0, 10);
     return db.query(`
         SELECT ak.token, ak.master_key, ak.provider, ak.created_at,
                ak.usage_date, ak.usage_count, ak.prompt_names, ak.lorebook_names,
-               ak.plugin_names, mk.limit_per_day
+               ak.plugin_names, mk.limit_per_day, mk.pool_mode, mk.pool_usage_date, mk.pool_usage_count
         FROM api_keys ak
         LEFT JOIN master_keys mk ON ak.master_key = mk.name
         WHERE ak.owner = ?
-    `).all(user).map(r => ({
-        key: r.token,
-        provider: r.provider,
-        masterKey: r.master_key,
-        createdAt: r.created_at,
-        limit: r.limit_per_day ?? 0,
-        usageDate: r.usage_date,
-        usageCount: r.usage_count,
-        promptNames: JSON.parse(r.prompt_names || '[]'),
-        lorebookNames: JSON.parse(r.lorebook_names || '[]'),
-        pluginNames: JSON.parse(r.plugin_names || '[]')
-    }));
+    `).all(user).map(r => {
+        const isPool = r.pool_mode === 1;
+        return {
+            key: r.token,
+            provider: r.provider,
+            masterKey: r.master_key,
+            createdAt: r.created_at,
+            limit: r.limit_per_day ?? 0,
+            poolMode: isPool,
+            usageDate: isPool ? (r.pool_usage_date ?? null) : (r.usage_date ?? null),
+            usageCount: isPool
+                ? (r.pool_usage_date === today ? (r.pool_usage_count ?? 0) : 0)
+                : (r.usage_count ?? 0),
+            promptNames: JSON.parse(r.prompt_names || '[]'),
+            lorebookNames: JSON.parse(r.lorebook_names || '[]'),
+            pluginNames: JSON.parse(r.plugin_names || '[]')
+        };
+    });
 }
 
 function createApiKey(masterKeyName, owner) {
@@ -868,6 +877,31 @@ process.on("SIGINT", () => {
     process.exit(0);
 });
 
+function getMasterKeyAccessUsers(masterKeyName, requestingUser) {
+    const mk = db.query("SELECT owner FROM master_keys WHERE name = ?").get(masterKeyName);
+    if (!mk) return { worked: false, message: "Not found" };
+    if (mk.owner !== requestingUser) return { worked: false, message: "Forbidden" };
+    const rows = db.query("SELECT username FROM master_key_access WHERE master_key_name = ?").all(masterKeyName);
+    return { worked: true, users: rows.map(r => r.username) };
+}
+
+function revokeMasterKeyAccess(masterKeyName, targetUser, requestingUser) {
+    const mk = db.query("SELECT owner FROM master_keys WHERE name = ?").get(masterKeyName);
+    if (!mk) return { worked: false, message: "Not found" };
+    if (mk.owner !== requestingUser) return { worked: false, message: "Forbidden" };
+    db.run("DELETE FROM master_key_access WHERE master_key_name = ? AND username = ?", [masterKeyName, targetUser]);
+    return { worked: true };
+}
+
+function refreshMasterKeyCode(masterKeyName, requestingUser) {
+    const mk = db.query("SELECT owner FROM master_keys WHERE name = ?").get(masterKeyName);
+    if (!mk) return { worked: false, message: "Not found" };
+    if (mk.owner !== requestingUser) return { worked: false, message: "Forbidden" };
+    const newCode = crypto.randomBytes(5).toString("hex").toUpperCase();
+    db.run("UPDATE master_keys SET code = ? WHERE name = ?", [newCode, masterKeyName]);
+    return { worked: true, code: newCode };
+}
+
 module.exports = {
     isAdmin,
     isOwner,
@@ -921,5 +955,8 @@ module.exports = {
     getDbCounts,
     getExcludedUsers,
     addExcludedUser,
-    removeExcludedUser
+    removeExcludedUser,
+    getMasterKeyAccessUsers,
+    revokeMasterKeyAccess,
+    refreshMasterKeyCode
 };

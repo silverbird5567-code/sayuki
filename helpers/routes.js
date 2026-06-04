@@ -48,7 +48,10 @@ const {
     getDbCounts,
     getExcludedUsers,
     addExcludedUser,
-    removeExcludedUser
+    removeExcludedUser,
+    getMasterKeyAccessUsers,
+    revokeMasterKeyAccess,
+    refreshMasterKeyCode
 } = require("./storage.js")
 
 const { getRequestStats } = require("./chatApi.js")
@@ -543,6 +546,31 @@ module.exports = function (fastify, opts, done) {
 
         const result = removePluginFromApiKey(apiKey, pluginName)
         return reply.code(result.worked ? 200 : 400).send(result)
+    })
+
+    fastify.get("/api/masterkeys/:name/users", async (request, reply) => {
+        if (!isAuthed(request)) return reply.code(401).send({ error: "Unauthorized" })
+        const username = getUserFromRequest(request)
+        const result = getMasterKeyAccessUsers(request.params.name, username)
+        return reply.code(result.worked ? 200 : (result.message === "Forbidden" ? 403 : 404)).send(result)
+    })
+
+    fastify.delete("/api/masterkeys/:name/revokeUser", async (request, reply) => {
+        if (!isAuthed(request)) return reply.code(401).send({ error: "Unauthorized" })
+        const username = getUserFromRequest(request)
+        const { username: target } = request.body ?? {}
+        if (!target) return reply.code(400).send({ error: "username is required" })
+        const result = revokeMasterKeyAccess(request.params.name, target, username)
+        if (result.worked) logItem(`Revoked access for ${target} on provider ${request.params.name}`, "audit", username, request.ip)
+        return reply.code(result.worked ? 200 : (result.message === "Forbidden" ? 403 : 400)).send(result)
+    })
+
+    fastify.post("/api/masterkeys/:name/refreshCode", async (request, reply) => {
+        if (!isAuthed(request)) return reply.code(401).send({ error: "Unauthorized" })
+        const username = getUserFromRequest(request)
+        const result = refreshMasterKeyCode(request.params.name, username)
+        if (result.worked) logItem(`Refreshed access code for provider ${request.params.name}`, "audit", username, request.ip)
+        return reply.code(result.worked ? 200 : (result.message === "Forbidden" ? 403 : 400)).send(result)
     })
 
     fastify.get("/api/masterkeys/:name/excluded", async (request, reply) => {

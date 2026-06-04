@@ -3,12 +3,12 @@ let accessibleMasterKeys = [];
 let allKeys = [];
 
 function addKey(keyData) {
-    const { key, provider, masterKey, createdAt, limit, usageDate, usageCount, promptNames = [], lorebookNames = [], pluginNames = [] } = keyData;
+    const { key, provider, masterKey, createdAt, limit, usageDate, usageCount, poolMode, promptNames = [], lorebookNames = [], pluginNames = [] } = keyData;
     const masked = key.slice(0, 8) + "••••••••••••••••••••••••••••" + key.slice(-4);
     const date = createdAt ? new Date(createdAt * 1000).toLocaleDateString() : "—";
     const today = new Date().toISOString().slice(0, 10);
     const todayCount = usageDate === today ? (usageCount || 0) : 0;
-    const usageDisplay = limit > 0 ? `${todayCount} / ${limit} today` : "Unlimited";
+    const usageDisplay = limit > 0 ? `${todayCount} / ${limit} today${poolMode ? " (shared pool)" : ""}` : "Unlimited";
     const assocCount = (promptNames?.length || 0) + (lorebookNames?.length || 0) + (pluginNames?.length || 0);
 
     const el = document.createElement("div");
@@ -38,6 +38,7 @@ function addKey(keyData) {
     el.dataset.limit = limit;
     el.dataset.usageDate = usageDate || "";
     el.dataset.usageCount = usageCount || 0;
+    el.dataset.poolMode = poolMode ? "1" : "0";
 
     const tokenEl = el.querySelector(".key-token");
     tokenEl.textContent = masked;
@@ -53,9 +54,12 @@ function updateKeyUsageDisplay(el) {
     const limit = parseInt(el.dataset.limit) || 0;
     const usageDate = el.dataset.usageDate;
     const usageCount = usageDate === today ? (parseInt(el.dataset.usageCount) || 0) : 0;
+    const isPool = el.dataset.poolMode === "1";
     const span = el.querySelector(".requests-text");
     if (!span) return;
-    span.textContent = limit > 0 ? `${usageCount} / ${limit} today` : `${usageCount} today`;
+    span.textContent = limit > 0
+        ? `${usageCount} / ${limit} today${isPool ? " (shared pool)" : ""}`
+        : `${usageCount} today${isPool ? " (shared pool)" : ""}`;
 }
 
 function copyKey(key) {
