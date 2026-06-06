@@ -117,8 +117,7 @@ async function openCreateModal() {
         for (const mk of masterKeys) {
             const opt = document.createElement("option");
             opt.value = mk.name;
-            const models = mk.models && mk.models.length > 0 ? ` (${mk.models.join(", ")})` : "";
-            opt.textContent = `${mk.name}${models}`;
+            opt.textContent = `${mk.name}`;
             select.appendChild(opt);
         }
         if (masterKeys.length === 0) {
