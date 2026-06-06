@@ -108,6 +108,10 @@ try {
     db.run(`ALTER TABLE master_keys ADD COLUMN pool_usage_count INTEGER NOT NULL DEFAULT 0`);
 } catch (e) {}
 
+try {
+    db.run(`ALTER TABLE users ADD COLUMN is_provider INTEGER NOT NULL DEFAULT 0`);
+} catch (e) {}
+
 db.run(`CREATE TABLE IF NOT EXISTS master_key_access (
     username        TEXT NOT NULL,
     master_key_name TEXT NOT NULL,
@@ -207,14 +211,15 @@ function getBanned(username) {
 }
 
 function getUsers() {
-    return db.query("SELECT username, avatar, created_at, is_admin, is_owner, is_banned, banned_reason FROM users").all().map(r => ({
+    return db.query("SELECT username, avatar, created_at, is_admin, is_owner, is_banned, banned_reason, is_provider FROM users").all().map(r => ({
         username: r.username,
         avatar: r.avatar ?? null,
         creationTime: r.created_at,
         isAdmin: r.is_admin === 1,
         isOwner: r.is_owner === 1,
         isBanned: r.is_banned === 1,
-        bannedReason: r.banned_reason ?? ""
+        bannedReason: r.banned_reason ?? "",
+        isProvider: r.is_provider === 1
     }));
 }
 
@@ -287,6 +292,18 @@ function setUserAdmin(username, makeAdmin) {
     if (!userExists(username)) return { worked: false, message: "User not found" };
     if (isOwner(username)) return { worked: false, message: "Cannot change the owner's rank" };
     db.run("UPDATE users SET is_admin = ? WHERE username = ?", [makeAdmin ? 1 : 0, username]);
+    return { worked: true };
+}
+
+function isProvider(username) {
+    const row = db.query("SELECT is_provider, is_admin, is_banned FROM users WHERE username = ?").get(username);
+    if (!row || row.is_banned === 1) return false;
+    return row.is_admin === 1 || row.is_provider === 1;
+}
+
+function setUserProvider(username, makeProvider) {
+    if (!userExists(username)) return { worked: false, message: "User not found" };
+    db.run("UPDATE users SET is_provider = ? WHERE username = ?", [makeProvider ? 1 : 0, username]);
     return { worked: true };
 }
 
@@ -949,6 +966,8 @@ module.exports = {
     banUser,
     unbanUser,
     setUserAdmin,
+    isProvider,
+    setUserProvider,
     logItem,
     getAuditLogs,
     getFlaggedChats,

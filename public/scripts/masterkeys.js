@@ -389,8 +389,10 @@ async function refreshAccessCode() {
 }
 
 async function init() {
-    const loggedIn = await auth.isLoggedIn();
-    if (!loggedIn) { window.location = "/"; return; }
+    if (!await auth.isLoggedIn()) { window.location = "/"; return; }
+
+    const provRes = await fetch("/api/users/isProvider", { headers: authHeaders() });
+    if (await provRes.text() !== "true") { window.location = "/dashboard"; return; }
 
     const res = await fetch("/api/masterkeys", { headers: authHeaders() });
     if (res.ok) {

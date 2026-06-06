@@ -320,6 +320,11 @@
         background-color: rgb(254, 181, 191, 0.2);
     }
 
+    .user-badge.provider {
+        border-color: #80cfff;
+        color: #80cfff;
+    }
+
     .user-badges {
         display: flex;
         gap: 4px;
@@ -495,13 +500,22 @@
         border-top: 1px solid rgba(254, 181, 191, 0.2);
         margin: 0;
     }
+
+    .modal-action-btn.provider {
+        border-color: #80cfff;
+        color: #80cfff;
+    }
+
+    .modal-action-btn.provider:hover {
+        background-color: rgba(128, 207, 255, 0.2);
+    }
 </style>
 <link href="../../styles/global.css" type="stylesheet">
 <link href="../../styles/index.css" type="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block&icons=person_add,close,person,lock_open,lock_reset" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block&icons=person_add,close,person,lock_open,lock_reset,verified" rel="stylesheet" />
 
 <body>
     <div style="display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box">
@@ -564,6 +578,15 @@
                         Remove admin
                     </button>
                 </div>
+                <div id="modal-provider-section" style="display:none;flex-direction:column;gap:8px">
+                    <button class="modal-action-btn provider" id="modal-make-provider-btn">
+                        <span class="material-symbols-outlined" style="font-size:16px">verified</span>
+                        Set as provider
+                    </button>
+                    <button class="modal-action-btn danger" id="modal-remove-provider-btn" style="display:none">
+                        Remove provider
+                    </button>
+                </div>
                 <button class="modal-action-btn" id="modal-reset-auto-btn" onclick="">
                     <span class="material-symbols-outlined" style="font-size:16px">lock_reset</span>
                     Reset to auto password
@@ -607,6 +630,7 @@
             let badges = ""
             if (user.isOwner) badges += `<span class="user-badge owner">owner</span>`
             else if (user.isAdmin) badges += `<span class="user-badge admin">admin</span>`
+            if (user.isProvider) badges += `<span class="user-badge provider">provider</span>`
             if (user.isBanned) badges += `<span class="user-badge banned">banned</span>`
 
             card.innerHTML = `
@@ -663,6 +687,7 @@
             let badgesHtml = ""
             if (user.isOwner) badgesHtml += `<span class="user-badge owner">owner</span>`
             else if (user.isAdmin) badgesHtml += `<span class="user-badge admin">admin</span>`
+            if (user.isProvider) badgesHtml += `<span class="user-badge provider">provider</span>`
             if (user.isBanned) badgesHtml += `<span class="user-badge banned">banned</span>`
 
             document.getElementById("modal-avatar-wrap").innerHTML = avatarHtml
@@ -698,10 +723,29 @@
                 adminSection.style.display = "none"
             }
 
+            const providerSection = document.getElementById("modal-provider-section")
+            const makeProviderBtn = document.getElementById("modal-make-provider-btn")
+            const removeProviderBtn = document.getElementById("modal-remove-provider-btn")
+
+            if (!user.isOwner) {
+                providerSection.style.display = "flex"
+                if (user.isProvider) {
+                    makeProviderBtn.style.display = "none"
+                    removeProviderBtn.style.display = ""
+                } else {
+                    makeProviderBtn.style.display = ""
+                    removeProviderBtn.style.display = "none"
+                }
+            } else {
+                providerSection.style.display = "none"
+            }
+
             document.getElementById("modal-unban-btn").onclick = () => doUnban(username)
             document.getElementById("modal-ban-confirm-btn").onclick = () => doBan(username)
             document.getElementById("modal-make-admin-btn").onclick = () => doSetAdmin(username, true)
             document.getElementById("modal-remove-admin-btn").onclick = () => doSetAdmin(username, false)
+            document.getElementById("modal-make-provider-btn").onclick = () => doSetProvider(username, true)
+            document.getElementById("modal-remove-provider-btn").onclick = () => doSetProvider(username, false)
             document.getElementById("modal-reset-auto-btn").onclick = () => doResetToAuto(username)
 
             document.getElementById("user-modal").style.display = "flex"
@@ -814,8 +858,45 @@
             let badges = ""
             if (user.isOwner) badges += `<span class="user-badge owner">owner</span>`
             else if (user.isAdmin) badges += `<span class="user-badge admin">admin</span>`
+            if (user.isProvider) badges += `<span class="user-badge provider">provider</span>`
             if (user.isBanned) badges += `<span class="user-badge banned">banned</span>`
             card.querySelector(".user-badges").innerHTML = badges
+        }
+
+        async function doSetProvider(username, makeProvider) {
+            const btn = makeProvider
+                ? document.getElementById("modal-make-provider-btn")
+                : document.getElementById("modal-remove-provider-btn")
+            btn.textContent = makeProvider ? "Setting..." : "Removing..."
+            btn.style.opacity = "0.6"
+            const res = await fetch(`/api/users/setProvider/${encodeURIComponent(username)}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token"),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ makeProvider })
+            })
+            btn.style.opacity = ""
+            if (res.ok) {
+                const doneLabel = makeProvider ? "Provider set!" : "Provider removed!"
+                btn.textContent = doneLabel
+                btn.style.borderColor = "#4caf50"
+                btn.style.color = "#4caf50"
+                setTimeout(() => {
+                    btn.innerHTML = makeProvider
+                        ? '<span class="material-symbols-outlined" style="font-size:16px">verified</span> Set as provider'
+                        : "Remove provider"
+                    btn.style.borderColor = ""
+                    btn.style.color = ""
+                }, 1500)
+                userMap[username].isProvider = makeProvider
+                refreshCard(username)
+                openUserModal(username)
+            } else {
+                btn.textContent = makeProvider ? "Set as provider" : "Remove provider"
+                alert("Failed to update provider status.")
+            }
         }
 
         async function doCreateUser() {
@@ -851,7 +932,7 @@
                 }, 1500)
                 document.getElementById("create-user-modal").style.display = "none"
                 document.getElementById("create-username").value = ""
-                const newUser = { username, avatar: null, creationTime: Math.floor(Date.now() / 1000), isAdmin: false, isOwner: false, isBanned: false, bannedReason: "" }
+                const newUser = { username, avatar: null, creationTime: Math.floor(Date.now() / 1000), isAdmin: false, isOwner: false, isBanned: false, bannedReason: "", isProvider: false }
                 userMap[username] = newUser
                 createUser(newUser)
             } else {

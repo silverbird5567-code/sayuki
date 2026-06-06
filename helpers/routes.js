@@ -42,6 +42,8 @@ const {
     banUser,
     unbanUser,
     setUserAdmin,
+    isProvider,
+    setUserProvider,
     logItem,
     getAuditLogs,
     getFlaggedChats,
@@ -463,6 +465,23 @@ module.exports = function (fastify, opts, done) {
         if (typeof makeAdmin !== "boolean") return reply.code(400).send({ error: "makeAdmin (boolean) is required" })
         const result = setUserAdmin(username, makeAdmin)
         if (result.worked) logItem(`Set ${username} admin=${makeAdmin}`, "audit", requester, request.ip)
+        return reply.code(result.worked ? 200 : 400).send(result)
+    })
+
+    fastify.get("/api/users/isProvider", async (request, reply) => {
+        if (!isAuthed(request)) return reply.code(401).send({ error: "Unauthorized" })
+        const username = getUserFromRequest(request)
+        return reply.send(isProvider(username))
+    })
+
+    fastify.post("/api/users/setProvider/:username", async (request, reply) => {
+        if (!isAuthed(request, true)) return reply.code(401).send({ error: "Unauthorized" })
+        const requester = getUserFromRequest(request)
+        const { username } = request.params
+        const { makeProvider } = request.body ?? {}
+        if (typeof makeProvider !== "boolean") return reply.code(400).send({ error: "makeProvider (boolean) is required" })
+        const result = setUserProvider(username, makeProvider)
+        if (result.worked) logItem(`Set ${username} provider=${makeProvider}`, "audit", requester, request.ip)
         return reply.code(result.worked ? 200 : 400).send(result)
     })
 

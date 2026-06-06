@@ -28,6 +28,15 @@ const auth = {
         if (!await auth.isAdmin()) {
             window.location = "/";
         }
+    },
+    requireProvider: async function(){
+        if (!await auth.isLoggedIn()) { window.location = "/"; return; }
+        const stat = await fetch("/api/users/isProvider", {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        })
+        if (await stat.text() !== "true") {
+            window.location = "/dashboard";
+        }
     }
 }
 
