@@ -194,7 +194,8 @@ module.exports = function (fastify, opts, done) {
             "apiKey": request.body.apiKey,
             "apiModel": request.body.apiModel,
             "apiModelContextWindow": request.body.apiModelContextWindow,
-            "apiDiscordWebhook": request.body.apiDiscordWebhook
+            "apiDiscordWebhook": request.body.apiDiscordWebhook,
+            "moderationPrompt": request.body.moderationPrompt
         })
         logItem("Edited moderation settings", "audit", username, request.ip)
         return reply.send({ ok: true })
