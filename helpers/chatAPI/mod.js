@@ -91,22 +91,33 @@ async function scanChat(conversation, username, ip){
         {"role": "user", "content": `Analyze this transcript, determine if it violates the guidelines presented, if it does, return \`BLOCK\`, else, return \`PASS\`:\n\`\`\`markdown\n${transcript}\`\`\`\nPresent your analysis; BLOCK or PASS. If your judgement is BLOCK, provide a explanation in your response. Otherwise, ONLY return the word PASS and nothing else`}
     ]
 
-    const aiReply = await (await fetch(modConfig.apiUrl, {
-        headers: {
-            "Authorization": "Bearer " + modConfig.apiKey,
-            "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify({
-            "messages": moderationMessages,
-            "temperature": 0.1, // minimal, some apis dont support deterministic cause they fucking suck
-            "streaming": false,
-            "model": modConfig.apiModel
-        })
-    })).json()
+    async function callModerationModel(model) {
+        const reply = await (await fetch(modConfig.apiUrl, {
+            headers: {
+                "Authorization": "Bearer " + modConfig.apiKey,
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({
+                "messages": moderationMessages,
+                "temperature": 0.1, // minimal, some apis dont support deterministic cause they fucking suck
+                "streaming": false,
+                "model": model
+            })
+        })).json()
 
-    if (aiReply.error) {
-        throw new Error(`Moderation API error: ${typeof aiReply.error === "string" ? aiReply.error : JSON.stringify(aiReply.error)}`)
+        if (reply.error) {
+            throw new Error(`Moderation API error: ${typeof reply.error === "string" ? reply.error : JSON.stringify(reply.error)}`)
+        }
+        return reply
+    }
+
+    let aiReply
+    try {
+        aiReply = await callModerationModel(modConfig.apiModel)
+    } catch (err) {
+        // primary model failed, fall back to a free model
+        aiReply = await callModerationModel("z-ai/glm-4.5-air:free")
     }
 
     let result
