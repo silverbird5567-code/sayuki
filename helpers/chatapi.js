@@ -155,7 +155,7 @@ module.exports = function (fastify, opts, done) {
       try { upstreamBody = await upstream.json() } catch { upstreamBody = null }
       return reply.status(upstream.status).send({
         error: {
-          message: upstreamBody?.error?.message ?? "Upstream provider returned an error.",
+          message: "Upstream provider returned an error.",
           type: "upstream_error",
           code: upstreamBody?.error?.code ?? "upstream_error",
           param: null,
