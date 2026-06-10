@@ -117,7 +117,7 @@ async function scanChat(conversation, username, ip){
         aiReply = await callModerationModel(modConfig.apiModel)
     } catch (err) {
         // primary model failed, fall back to a free model
-        aiReply = await callModerationModel("z-ai/glm-4.5-air:free")
+        aiReply = await callModerationModel("meta-llama/llama-3.1-8b-instruct")
     }
 
     let result
