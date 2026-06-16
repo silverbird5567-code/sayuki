@@ -3361,12 +3361,9 @@ body {
   user-select: none;
 }
 
-body::-webkit-scrollbar {
+::-webkit-scrollbar {
   display: none;
-}
-
-iframe::-webkit-scrollbar {
-  display: none;
+  scrollbar-width: none;
 }
 
 span {
