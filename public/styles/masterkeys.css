@@ -267,7 +267,7 @@ input {
     box-sizing: border-box;
     backdrop-filter: blur(5px);
     transition: all 0.2s ease-in-out;
-    background-color: transparent;
+    background-color: rgba(254, 181, 191, 0.3);
     font-family: "Inter";
 }
 
@@ -283,7 +283,7 @@ input:focus::placeholder {
 }
 
 input::placeholder {
-    color: rgba(254, 181, 191, 0.6);
+    color: #feb5bf;
 }
 
 input:disabled {
